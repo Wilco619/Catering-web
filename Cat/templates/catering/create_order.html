@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+
+{% block title %}Place New Order | Your Catering Company{% endblock %}
+
+{% block extra_css %}
+<style>
+    .menu-item-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .menu-item-card:hover {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+    }
+    .menu-item-card.selected {
+        border: 2px solid #198754;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Place Your Catering Order</h1>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post" id="orderForm">
+                {% csrf_token %}
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Order Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.order_type.id_for_label }}" class="form-label">Order Type*</label>
+                                {{ order_form.order_type }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.event_type.id_for_label }}" class="form-label">Event Type</label>
+                                {{ order_form.event_type }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ order_form.company_name.id_for_label }}" class="form-label">Company/Organization Name</label>
+                            {{ order_form.company_name }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.event_date.id_for_label }}" class="form-label">Event Date and Time*</label>
+                                {{ order_form.event_date }}
+                                <small class="text-muted">Please select a date at least 48 hours in advance</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.number_of_people.id_for_label }}" class="form-label">Number of People*</label>
+                                {{ order_form.number_of_people }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ order_form.delivery_address.id_for_label }}" class="form-label">Delivery Address*</label>
+                            {{ order_form.delivery_address }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.contact_phone.id_for_label }}" class="form-label">Contact Phone*</label>
+                                {{ order_form.contact_phone }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ order_form.contact_email.id_for_label }}" class="form-label">Contact Email*</label>
+                                {{ order_form.contact_email }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ order_form.special_requests.id_for_label }}" class="form-label">Special Requests or Dietary Requirements</label>
+                            {{ order_form.special_requests }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Menu Selection</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Category Filter -->
+                        <div class="mb-4">
+                            <label class="form-label">Filter by Category</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-outline-primary category-filter active" data-category="all">All</button>
+                                {% for category in categories %}
+                                <button type="button" class="btn btn-outline-primary category-filter" data-category="{{ category.id }}">{{ category.name }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Menu Items Grid -->
+                        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4" id="menuItemsGrid">
+                            {% for item in menu_items %}
+                            <div class="col menu-item" data-category="{{ item.category.id }}" data-price="{{ item.price }}">
+                                <div class="card h-100 menu-item-card" data-item-id="{{ item.id }}">
+                                    {% if item.image %}
+                                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 150px; object-fit: cover;">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.name }}</h5>
+                                        <p class="card-text small">{{ item.description|truncatechars:80 }}</p>
+                                        <p class="card-text fw-bold">Ksh{{ item.price }}</p>
+                                        <div class="input-group quantity-control d-none">
+                                            <span class="input-group-text btn btn-outline-secondary btn-sm decrease-qty">-</span>
+                                            <input type="number" class="form-control form-control-sm item-quantity text-center" value="0" min="0" data-price="{{ item.price }}">
+                                            <span class="input-group-text btn btn-outline-secondary btn-sm increase-qty">+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Selected Items -->
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Selected Items</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="selectedItemsContainer">
+                                    <p id="noItemsMessage">No items selected yet.</p>
+                                    <div id="selectedItems"></div>
+                                </div>
+                                
+                                <!-- Order Items Formset -->
+                                {{ formset.management_form }}
+                                <div id="orderItemsFormset" class="d-none">
+                                    {% for form in formset %}
+                                    <div class="order-item-form">
+                                        {{ form.id }}
+                                        <div class="mb-2">
+                                            {{ form.menu_item }}
+                                            {{ form.quantity }}
+                                            {{ form.price }}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="text-end">
+                                    <h5>Total: Ksh<span id="orderTotal">0.00</span></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'menu' %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit Order</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div id="orderSummary">
+                        <p>Complete the form to see your order summary</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>Our catering specialists are here to assist you:</p>
+                    <p><i class="fas fa-phone"></i> (+254) 123-4567-89</p>
+                    <p><i class="fas fa-envelope"></i> catering@tradebells.com</p>
+                    <hr>
+                    <p class="small">Please note: Orders must be placed at least 48 hours in advance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Category filter functionality
+        $('.category-filter').on('click', function() {
+            $('.category-filter').removeClass('active');
+            $(this).addClass('active');
+            
+            const selectedCategory = $(this).data('category');
+            
+            if (selectedCategory === 'all') {
+                $('.menu-item').show();
+            } else {
+                $('.menu-item').hide();
+                $(`.menu-item[data-category="${selectedCategory}"]`).show();
+            }
+        });
+        
+        // Menu item selection
+        $('.menu-item-card').on('click', function() {
+            const itemId = $(this).data('item-id');
+            const isSelected = $(this).hasClass('selected');
+            
+            if (isSelected) {
+                // Deselect the item
+                $(this).removeClass('selected');
+                $(this).find('.quantity-control').addClass('d-none');
+                $(this).find('.item-quantity').val(0);
+                updateSelectedItems();
+            } else {
+                // Select the item
+                $(this).addClass('selected');
+                $(this).find('.quantity-control').removeClass('d-none');
+                $(this).find('.item-quantity').val(1);
+                updateSelectedItems();
+            }
+        });
+        
+        // Quantity controls
+        $(document).on('click', '.increase-qty', function(e) {
+            e.stopPropagation();
+            const input = $(this).siblings('.item-quantity');
+            input.val(parseInt(input.val()) + 1);
+            updateSelectedItems();
+        });
+        
+        $(document).on('click', '.decrease-qty', function(e) {
+            e.stopPropagation();
+            const input = $(this).siblings('.item-quantity');
+            const currentValue = parseInt(input.val());
+            
+            if (currentValue > 1) {
+                input.val(currentValue - 1);
+            } else {
+                // If reducing to 0, deselect the item
+                $(this).closest('.menu-item-card').removeClass('selected');
+                $(this).closest('.quantity-control').addClass('d-none');
+                input.val(0);
+            }
+            
+            updateSelectedItems();
+        });
+        
+        $(document).on('change', '.item-quantity', function(e) {
+            e.stopPropagation();
+            const value = parseInt($(this).val());
+            
+            if (value <= 0) {
+                $(this).closest('.menu-item-card').removeClass('selected');
+                $(this).closest('.quantity-control').addClass('d-none');
+                $(this).val(0);
+            }
+            
+            updateSelectedItems();
+        });
+        
+        // Update the selected items display and formset
+        function updateSelectedItems() {
+            const selectedItems = [];
+            let total = 0;
+            
+            $('.menu-item-card.selected').each(function() {
+                const itemId = $(this).data('item-id');
+                const itemName = $(this).find('.card-title').text();
+                const itemPrice = parseFloat($(this).closest('.menu-item').data('price'));
+                const quantity = parseInt($(this).find('.item-quantity').val());
+                const subtotal = itemPrice * quantity;
+                
+                selectedItems.push({
+                    id: itemId,
+                    name: itemName,
+                    price: itemPrice,
+                    quantity: quantity,
+                    subtotal: subtotal
+                });
+                
+                total += subtotal;
+            });
+            
+            // Update the display
+            const selectedItemsContainer = $('#selectedItems');
+            selectedItemsContainer.empty();
+            
+            if (selectedItems.length > 0) {
+                $('#noItemsMessage').hide();
+                
+                selectedItems.forEach(item => {
+                    selectedItemsContainer.append(`
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="fw-bold">${item.quantity}x</span> ${item.name}
+                            </div>
+                            <div>
+                                Ksh${item.subtotal.toFixed(2)}
+                            </div>
+                        </div>
+                    `);
+                });
+            } else {
+                $('#noItemsMessage').show();
+            }
+            
+            // Update the total
+            $('#orderTotal').text(total.toFixed(2));
+            
+            // Update the order summary in the sidebar
+            updateOrderSummary();
+            
+            // Update the formset
+            updateFormset(selectedItems);
+        }
+        
+        // Update the order summary in the sidebar
+        function updateOrderSummary() {
+            const orderType = $('#id_order_type option:selected').text();
+            const eventType = $('#id_event_type option:selected').text();
+            const eventDate = $('#id_event_date').val();
+            const numPeople = $('#id_number_of_people').val();
+            const total = $('#orderTotal').text();
+            
+            let summaryHTML = '<ul class="list-unstyled">';
+            
+            if (orderType) {
+                summaryHTML += `<li class="mb-2"><strong>Order Type:</strong> ${orderType}</li>`;
+            }
+            
+            if (eventType && eventType !== '---------') {
+                summaryHTML += `<li class="mb-2"><strong>Event Type:</strong> ${eventType}</li>`;
+            }
+            
+            if (eventDate) {
+                const formattedDate = new Date(eventDate).toLocaleString();
+                summaryHTML += `<li class="mb-2"><strong>Event Date:</strong> ${formattedDate}</li>`;
+            }
+            
+            if (numPeople) {
+                summaryHTML += `<li class="mb-2"><strong>Guests:</strong> ${numPeople}</li>`;
+            }
+            
+            summaryHTML += `<li class="mb-2"><strong>Items Selected:</strong> ${$('.menu-item-card.selected').length}</li>`;
+            summaryHTML += `<li class="mb-2"><strong>Total:</strong> Ksh${total}</li>`;
+            summaryHTML += '</ul>';
+            
+            $('#orderSummary').html(summaryHTML);
+        }
+        
+        // Update the hidden formset with selected items
+        function updateFormset(selectedItems) {
+            // Clear existing forms first
+            const formsetContainer = $('#orderItemsFormset');
+            const totalFormsInput = $('#id_order_items-TOTAL_FORMS');
+            const initialFormsInput = $('#id_order_items-INITIAL_FORMS');
+            
+            // Set the number of forms
+            const numForms = selectedItems.length;
+            totalFormsInput.val(numForms);
+            initialFormsInput.val(0);
+            
+            // Remove existing forms
+            formsetContainer.find('.order-item-form').not(':first').remove();
+            
+            // Clone the first form for each selected item
+            const originalForm = formsetContainer.find('.order-item-form:first').clone();
+            formsetContainer.find('.order-item-form:first').remove();
+            
+            // Add a new form for each selected item
+            selectedItems.forEach((item, index) => {
+                const newForm = originalForm.clone();
+                
+                // Update form index
+                newForm.find(':input').each(function() {
+                    const oldName = $(this).attr('name');
+                    if (oldName) {
+                        const newName = oldName.replace('order_items-0', `order_items-${index}`);
+                        $(this).attr('name', newName);
+                        $(this).attr('id', newName);
+                    }
+                });
+                
+                // Set values
+                newForm.find('select[name$=menu_item]').val(item.id);
+                newForm.find('input[name$=quantity]').val(item.quantity);
+                newForm.find('input[name$=price]').val(item.price);
+                
+                formsetContainer.append(newForm);
+            });
+        }
+        
+        // Update form fields to trigger order summary update
+        $('#id_order_type, #id_event_type, #id_event_date, #id_number_of_people').on('change', function() {
+            updateOrderSummary();
+        });
+        
+        // Form validation before submission
+        $('#orderForm').on('submit', function(e) {
+            const selectedItems = $('.menu-item-card.selected').length;
+            
+            if (selectedItems === 0) {
+                e.preventDefault();
+                alert('Please select at least one menu item for your order.');
+                return false;
+            }
+            
+            const eventDate = new Date($('#id_event_date').val());
+            const now = new Date();
+            const twoDaysLater = new Date(now.setHours(now.getHours() + 48));
+            
+            if (eventDate < twoDaysLater) {
+                e.preventDefault();
+                alert('Please select an event date at least 48 hours in advance.');
+                return false;
+            }
+            
+            return true;
+        });
+    });
+</script>
+{% endblock %}

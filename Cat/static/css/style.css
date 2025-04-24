@@ -1,0 +1,20 @@
+/* Custom styles for images to ensure proper display */
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}

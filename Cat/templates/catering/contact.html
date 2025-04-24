@@ -1,0 +1,214 @@
+<!-- templates/catering/contact.html -->
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Your Catering Company{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1 class="display-4">Contact Us</h1>
+                <p class="lead">Have questions? We're here to help!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Information -->
+<section class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                    <h3>Our Location</h3>
+                    <p>123 C Way<br>, 90210</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-phone fa-3x text-primary mb-3"></i>
+                    <h3>Call Us</h3>
+                    <p>(+254) 123-4567-89<br>Monday-Friday: 8am-5pm</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                    <h3>Email Us</h3>
+                    <p>info@tradebells.com<br>We respond within 24 hours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="container mb-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">Send Us a Message</h2>
+                    
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.name.label_tag }}
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.email.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.subject.label_tag }}
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                            <div class="text-danger">
+                                {% for error in form.subject.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.message.label_tag }}
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                            <div class="text-danger">
+                                {% for error in form.message.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">Frequently Asked Questions</h2>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                    How far in advance should I book catering?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We recommend booking at least 2-3 weeks in advance for standard events, and 1-2 months for large events or during peak seasons.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                    Do you accommodate dietary restrictions?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, we can accommodate most dietary restrictions including vegetarian, vegan, gluten-free, and various allergies. Please mention any requirements when placing your order.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                    What is your cancellation policy?
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Orders can be cancelled with a full refund up to 72 hours before the event. Cancellations within 72 hours may be subject to a partial charge.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                    Do you provide staff for events?
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, we can provide professional service staff including servers, bartenders, and event coordinators for an additional fee. Please inquire for details.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="container-fluid px-0 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="map-container">
+                <!-- Replace with your Google Maps embed code or interactive map -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4356.952225034991!2d36.774971677368!3d-1.2838730855421943!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10a171702cdd%3A0xd233fd17ff7f918b!2sTrade%20Bells%20Services%20LTD!5e0!3m2!1sen!2ske!4v1745054677303!5m2!1sen!2ske" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <h2>Ready to get started?</h2>
+        <p class="lead mb-4">Book our catering services for your next event today!</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'create_order' %}" class="btn btn-primary btn-lg">Place an Order</a>
+            <a href="{% url 'menu' %}" class="btn btn-primary btn-lg">View Our Menu</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

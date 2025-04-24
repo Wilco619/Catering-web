@@ -1,0 +1,185 @@
+<!-- templates/catering/menu.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our Menu - Your Catering Company{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1 class="display-4">Our Menu</h1>
+                <p class="lead">Explore our diverse culinary offerings for any occasion</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Filters -->
+<section class="container mb-5">
+    <div class="row g-3">
+        <div class="col-md-8">
+            <div class="categories-filter d-flex flex-wrap gap-2">
+                <a href="{% url 'menu' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All Categories
+                </a>
+                {% for category in categories %}
+                <a href="{% url 'menu' %}?category={{ category.slug }}" class="btn {% if selected_category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <form method="get" action="{% url 'menu' %}">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search menu items..." value="{{ request.GET.search|default:'' }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Menu Items -->
+<section class="container mb-5">
+    {% if menu_items %}
+    <div class="row g-4">
+        {% for item in menu_items %}
+        <div class="col-md-4 col-sm-6">
+            <div class="card h-100">
+                {% comment %} {% if debug %}
+                <div class="alert alert-info">
+                    <small>
+                        Image path: {{ item.image.name|default:"No image" }}<br>
+                        Has image: {{ item.image|yesno:"Yes,No" }}
+                    </small>
+                </div>
+                {% endif %} {% endcomment %}
+                
+                {% if item.image and item.image.name %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}"
+                         style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'img/default-menu-item.jpg' %}" class="card-img-top" alt="{{ item.name }}"
+                         style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ item.name }}</h5>
+                        <span class="badge {% if item.is_featured %}bg-warning{% else %}bg-light text-dark{% endif %}">
+                            {% if item.is_featured %}Featured{% else %}{{ item.category.name }}{% endif %}
+                        </span>
+                    </div>
+                    <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="fw-bold fs-5">Ksh{{ item.price }}</span>
+                        <a href="{% url 'menu_item_detail' item.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="text-center py-5">
+        <h3>No menu items found</h3>
+        {% if request.GET.search %}
+        <p>No results for "{{ request.GET.search }}". Try a different search term or browse our categories.</p>
+        {% elif selected_category %}
+        <p>No items found in this category. Please check back later or browse other categories.</p>
+        {% else %}
+        <p>Our menu items will be available soon. Please check back later.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<!-- Special Dietary Needs Section -->
+<section class="container my-5 py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+            <img src="{% static 'img/diet.jpg' %}" alt="Special Dietary Needs" class="img-fluid rounded shadow-lg">
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+            <h2 class="mb-4">Special Dietary Requirements?</h2>
+            <p class="lead mb-4">We cater to various dietary needs including vegetarian, vegan, gluten-free, and allergen-specific requests.</p>
+            <div class="d-flex flex-wrap gap-3 mb-4">
+                <span class="badge bg-light text-dark p-2"><i class="fas fa-leaf text-success me-2"></i>Vegetarian</span>
+                <span class="badge bg-light text-dark p-2"><i class="fas fa-seedling text-success me-2"></i>Vegan</span>
+                <span class="badge bg-light text-dark p-2"><i class="fas fa-bread-slice text-warning me-2"></i>Gluten-Free</span>
+                <span class="badge bg-light text-dark p-2"><i class="fas fa-cheese text-warning me-2"></i>Dairy-Free</span>
+                <span class="badge bg-light text-dark p-2"><i class="fas fa-apple-alt text-danger me-2"></i>Nut-Free</span>
+            </div>
+            <p>Our chefs can customize any menu to meet your specific requirements without compromising on taste or presentation. Please contact us to discuss your needs.</p>
+            <a href="{% url 'contact' %}" class="btn btn-outline-primary">
+                <i class="fas fa-envelope me-2"></i>Contact Us About Dietary Needs
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h2>Ready to place an order for your next event?</h2>
+                <p class="lead">Our professional catering team is ready to serve your needs.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'create_order' %}" class="btn btn-primary btn-lg">Place an Order</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.id }} Details | Your Catering Company{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Order #{{ order.id }}</h1>
+        <div>
+            <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to My Orders
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Status Banner -->
+    <div class="alert {% if order.status == 'pending' %}alert-warning
+               {% elif order.status == 'confirmed' %}alert-info
+               {% elif order.status == 'in_progress' %}alert-primary
+               {% elif order.status == 'completed' %}alert-success
+               {% elif order.status == 'cancelled' %}alert-danger
+               {% endif %} mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="alert-heading">Order Status: {{ order.status|title }}</h5>
+                <p class="mb-0">
+                    {% if order.status == 'pending' %}
+                        Your order has been received and is awaiting confirmation.
+                    {% elif order.status == 'confirmed' %}
+                        Your order has been confirmed! We'll be in touch soon.
+                    {% elif order.status == 'in_progress' %}
+                        We're currently preparing your order.
+                    {% elif order.status == 'completed' %}
+                        Your order has been successfully delivered.
+                    {% elif order.status == 'cancelled' %}
+                        This order has been cancelled.
+                    {% endif %}
+                </p>
+            </div>
+            
+            {% if order.status == 'pending' or order.status == 'confirmed' %}
+            <div>
+                <form action="{% url 'cancel_order' order.id %}" method="post" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Cancel Order</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Order Details -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Order Type:</strong> {{ order.get_order_type_display }}</p>
+                            {% if order.event_type %}
+                            <p><strong>Event Type:</strong> {{ order.event_type.name }}</p>
+                            {% endif %}
+                            {% if order.company_name %}
+                            <p><strong>Company/Organization:</strong> {{ order.company_name }}</p>
+                            {% endif %}
+                            <p><strong>Number of People:</strong> {{ order.number_of_people }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Event Date:</strong> {{ order.event_date|date:"F j, Y, g:i a" }}</p>
+                            <p><strong>Order Placed:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                            {% if order.updated_at != order.created_at %}
+                            <p><strong>Last Updated:</strong> {{ order.updated_at|date:"F j, Y, g:i a" }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Contact Information</h6>
+                            <p><strong>Name:</strong> {{ order.user.get_full_name }}</p>
+                            <p><strong>Phone:</strong> {{ order.contact_phone }}</p>
+                            <p><strong>Email:</strong> {{ order.contact_email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Delivery Information</h6>
+                            <p><strong>Address:</strong></p>
+                            <address>{{ order.delivery_address|linebreaks }}</address>
+                        </div>
+                    </div>
+                    
+                    {% if order.special_requests %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Special Requests</h6>
+                        <div class="alert alert-light">
+                            {{ order.special_requests|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Order Items -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.menu_item.image %}
+                                            <img src="{{ item.menu_item.image.url }}" alt="{{ item.menu_item.name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.menu_item.name }}</h6>
+                                                <small class="text-muted">{{ item.menu_item.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Ksh{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end">Ksh{{ item.subtotal }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total:</th>
+                                    <th class="text-end">Ksh{{ order.total_amount }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary Sidebar -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Order #
+                            <span>{{ order.id }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Status
+                            <span class="badge {% if order.status == 'pending' %}bg-warning
+                               {% elif order.status == 'confirmed' %}bg-info
+                               {% elif order.status == 'in_progress' %}bg-primary
+                               {% elif order.status == 'completed' %}bg-success
+                               {% elif order.status == 'cancelled' %}bg-danger
+                               {% endif %}">{{ order.status|title }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Items
+                            <span>{{ order_items.count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Amount
+                            <span>Ksh{{ order.total_amount }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Help Card -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>For any questions or changes to your order, please contact our customer service team:</p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+15551234567">(555) 123-4567</a></p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:orders@yourcateringcompany.com">orders@yourcateringcompany.com</a></p>
+                    <hr>
+                    <p class="small">Please reference your order number ({{ order.id }}) in all communications.</p>
+                    {% if order.status == 'pending' or order.status == 'confirmed' %}
+                    <div class="alert alert-info small mb-0">
+                        <i class="fas fa-info-circle"></i> Orders can be modified or cancelled up to 24 hours before the event time.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

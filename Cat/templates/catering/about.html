@@ -1,0 +1,228 @@
+<!-- templates/catering/about.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Your Catering Company{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1 class="display-4">About Us</h1>
+                <p class="lead">Professional catering services with a passion for exceptional food and service</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{% static "img/chef.jpg" %}" alt="Our Story" class="img-fluid rounded shadow-lg">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="display-5 mb-4">Our Story</h2>
+                <p class="lead">For over 25years Trade Bells Services (TBS) has been
+                    a leading catering company in Nairobi specialising in
+                    providing corporate catering, institutional catering as
+                    well as catering to events and private functions.
+                </p>
+                <p>Our professionally trained staff are highly creative and
+                    use only the freshest produce available in creating the
+                    perfect blend of mouth watering & nutritious meals.
+                </p>
+                <p>We pride ourselves in our personal approach to catering
+                    to our esteemed clients’ needs through an emphasis on
+                    sound business ethics, quality services & delivering value
+                    for money
+                </p>
+                <p>To this regard, TBS is a certified company that is compliant with all mandatory regulatory & statutory requirements.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5">Our Values</h2>
+            <p class="lead">The principles that guide our business</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-utensils fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">Quality Ingredients</h3>
+                        <p class="card-text">We source the freshest, highest quality ingredients from local farms and suppliers whenever possible. Our commitment to quality is evident in every dish we prepare.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-handshake fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">Exceptional Service</h3>
+                        <p class="card-text">• Daily corporate catering - ( Daily Staff Lunches, Breakfast & Cocktail Functions)
+                            • Fully waited wedding lunches & dinners
+                            • Off-site & on-site catering
+                            • Institutional catering
+                            • Industrial catering
+                            • B.B.Q Catering</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <i class="fas fa-seedling fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h4">Sustainability</h3>
+                        <p class="card-text">We're committed to environmentally responsible practices, from reducing food waste and using eco-friendly packaging to supporting sustainable farming practices.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Team -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5">Meet Our Team</h2>
+            <p class="lead">The talented professionals behind our exceptional catering</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="{% static "img/chef.jpg" %}" class="card-img-top" alt="Executive Chef">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">John Smith</h5>
+                        <p class="card-text text-muted">Executive Chef</p>
+                        <p class="card-text small">With over 15 years of culinary experience, Chef John brings creativity and expertise to every menu he designs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="{% static "img/chef.jpg" %}" class="card-img-top" alt="Pastry Chef">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Sarah Johnson</h5>
+                        <p class="card-text text-muted">Pastry Chef</p>
+                        <p class="card-text small">Sarah specializes in creating stunning desserts and pastries that are as beautiful as they are delicious.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="{% static "img/chef.jpg" %}" class="card-img-top" alt="Event Manager">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Michael Brown</h5>
+                        <p class="card-text text-muted">Event Manager</p>
+                        <p class="card-text small">Michael ensures that every event runs smoothly, from initial planning to flawless execution.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="{% static "img/chef.jpg" %}" class="card-img-top" alt="Owner">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Emily Davis</h5>
+                        <p class="card-text text-muted">Owner & Founder</p>
+                        <p class="card-text small">Emily's passion for culinary excellence and hospitality inspired the founding of Your Catering Company.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Process -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5">Our Process</h2>
+            <p class="lead">How we bring your event to life</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="process-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                <i class="fas fa-comments fa-2x"></i>
+                            </div>
+                            <h4>Consultation</h4>
+                            <p>We start by understanding your needs, preferences, and vision for your event.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="process-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                <i class="fas fa-clipboard-list fa-2x"></i>
+                            </div>
+                            <h4>Planning</h4>
+                            <p>Our team develops a custom menu and service plan tailored to your event.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="process-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                <i class="fas fa-utensils fa-2x"></i>
+                            </div>
+                            <h4>Preparation</h4>
+                            <p>Our chefs prepare your menu using the freshest, highest quality ingredients.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="process-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                <i class="fas fa-glass-cheers fa-2x"></i>
+                            </div>
+                            <h4>Execution</h4>
+                            <p>We deliver, set up, and serve with professionalism and attention to detail.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h2 class="display-5">Ready to experience our catering?</h2>
+                <p class="lead">Contact us today to discuss your upcoming event.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg me-2">Contact Us</a>
+                <a href="{% url 'create_order' %}" class="btn btn-outline-light btn-lg">Place Order</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .process-icon {
+        width: 80px;
+        height: 80px;
+    }
+</style>
+{% endblock %}

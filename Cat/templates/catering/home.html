@@ -1,0 +1,281 @@
+<!-- templates/catering/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Catering Company - Professional Catering Services{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="height: 600px;">
+                <img src="{% static 'img/back1.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Corporate Catering">
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0,0,0,0.6); padding: 20px;">
+                    <h2>Corporate Catering Excellence</h2>
+                    <p>Elevate your business meetings and events with our premium catering services.</p>
+                    <a href="{% url 'create_order' %}" class="btn btn-primary">Order Now</a>
+                </div>
+            </div>
+            <div class="carousel-item" style="height: 600px;">
+                <img src="{% static 'img/back2.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Wedding Catering">
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0,0,0,0.6); padding: 20px;">
+                    <h2>Unforgettable Wedding Feasts</h2>
+                    <p>Create lasting memories with our exquisite wedding catering packages.</p>
+                    <a href="{% url 'create_order' %}" class="btn btn-primary">Order Now</a>
+                </div>
+            </div>
+            <div class="carousel-item" style="height: 600px;">
+                <img src="{% static 'img/back3.jpg' %}" class="d-block w-100 h-100 object-fit-cover" alt="Special Events">
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0,0,0,0.6); padding: 20px;">
+                    <h2>Special Event Catering</h2>
+                    <p>From intimate gatherings to grand celebrations, we cater to all your special moments.</p>
+                    <a href="{% url 'create_order' %}" class="btn btn-primary">Order Now</a>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4">Our Services</h2>
+            <p class="lead">Exceptional catering for every occasion</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="{% static 'img/back1.jpg' %}" class="card-img-top" alt="Corporate Catering">
+                    <div class="card-body">
+                        <h3 class="card-title">Corporate Catering</h3>
+                        <p class="card-text">We provide breakfast, lunch, and dinner options for your business meetings, conferences, and corporate events. Our flexible delivery ensures your team gets fresh, delicious meals on time.</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{% url 'create_order' %}" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="{% static 'img/back2.jpg' %}" class="card-img-top" alt="Wedding Catering">
+                    <div class="card-body">
+                        <h3 class="card-title">Wedding Catering</h3>
+                        <p class="card-text">Make your special day perfect with our customized wedding catering packages. From cocktail hours to lavish receptions, we'll help create an unforgettable dining experience.</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{% url 'create_order' %}" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <img src="{% static 'img/back3.jpg' %}" class="card-img-top" alt="Special Events">
+                    <div class="card-body">
+                        <h3 class="card-title">Special Events</h3>
+                        <p class="card-text">From birthday parties and anniversaries to graduations and holiday celebrations, we tailor our services to match the unique needs of your special occasion.</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{% url 'create_order' %}" class="btn btn-outline-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Menu Items Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4">Featured Menu Items</h2>
+            <p class="lead">Explore our chef's signature creations</p>
+        </div>
+        <div class="row g-4">
+            {% for item in featured_items %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                    {% else %}
+                    <img src="{% static 'img/default-menu-item.jpg' %}" class="card-img-top" alt="{{ item.name }}">
+                    {% endif %}        
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text">{{ item.description|truncatewords:20 }}</p>
+                        <p class="fw-bold">Ksh{{ item.price }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <a href="{% url 'menu_item_detail' item.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'menu' %}" class="btn btn-primary">View Full Menu</a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4">Menu Categories</h2>
+            <p class="lead">Discover our diverse culinary offerings</p>
+        </div>
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-md-3">
+                <div class="card h-100">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}">
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text small">{{ category.description|truncatewords:10 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 text-center">
+                        <a href="{% url 'menu' %}?category={{ category.slug }}" class="btn btn-sm btn-outline-primary">Browse Items</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Showcase -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4">Our Gallery</h2>
+            <p class="lead">A glimpse of our catering excellence</p>
+        </div>
+        <div class="row g-3">
+            {% for image in gallery_images %}
+            <div class="col-md-3 col-6">
+                <div class="position-relative gallery-item">
+                    <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.title }}">
+                    <div class="gallery-overlay rounded">
+                        <div class="gallery-info">
+                            <h6>{{ image.title }}</h6>
+                            {% if image.event_type %}
+                            <span class="badge bg-primary">{{ image.event_type }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'gallery' %}" class="btn btn-primary">View More Photos</a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-4">What Our Clients Say</h2>
+            <p class="lead">Hear from our satisfied customers</p>
+        </div>
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="card-text fst-italic">"{{ testimonial.text }}"</p>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">{{ testimonial.name }}</h6>
+                                {% if testimonial.company %}
+                                <small class="text-muted">{{ testimonial.company }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'add_testimonial' %}" class="btn btn-outline-primary">Leave a Testimonial</a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h2 class="display-5">Ready to place an order?</h2>
+                <p class="lead">Let us cater your next event with delicious food and professional service.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'create_order' %}" class="btn btn-outline-light btn-lg">Order Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .gallery-item {
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    
+    .gallery-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+    
+    .gallery-info {
+        text-align: center;
+        padding: 0.5rem;
+    }
+</style>
+{% endblock %}

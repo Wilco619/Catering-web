@@ -1,0 +1,214 @@
+<!-- templates/users/profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Your Catering Company{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">My Account</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-user me-2"></i> Profile Information
+                    </a>
+                    <a href="{% url 'my_orders' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-list me-2"></i> My Orders
+                    </a>
+                    <a href="{% url 'create_order' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus-circle me-2"></i> Place New Order
+                    </a>
+                    <a href="{% url 'add_testimonial' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-star me-2"></i> Add Testimonial
+                    </a>
+                    <a href="{% url 'password_reset' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-key me-2"></i> Change Password
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Need help?</h6>
+                    <p class="card-text small">Contact our customer support team for assistance with your account or orders.</p>
+                    <a href="{% url 'contact' %}" class="btn btn-sm btn-outline-primary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Profile Information</h4>
+                    <span class="badge bg-light text-dark">Member since {{ user.date_joined|date:"F Y" }}</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.first_name }}
+                                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.first_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    {{ form.last_name }}
+                                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.last_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            {{ form.email }}
+                            <label for="{{ form.email.id_for_label }}">Email Address</label>
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Your email address is also your username and cannot be changed.</div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            {{ form.company_name }}
+                            <label for="{{ form.company_name.id_for_label }}">Company Name (Optional)</label>
+                            {% if form.company_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.company_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            {{ form.phone_number }}
+                            <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.phone_number.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.address.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Recent Activity Panel -->
+            <div class="card shadow mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Recent Orders</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.orders.all %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in user.orders.all|slice:":5" %}
+                                    <tr>
+                                        <td>#{{ order.id }}</td>
+                                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        <td>{{ order.get_order_type_display }}</td>
+                                        <td>
+                                            {% if order.status == 'pending' %}
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            {% elif order.status == 'confirmed' %}
+                                                <span class="badge bg-info">Confirmed</span>
+                                            {% elif order.status == 'in_progress' %}
+                                                <span class="badge bg-primary">In Progress</span>
+                                            {% elif order.status == 'completed' %}
+                                                <span class="badge bg-success">Completed</span>
+                                            {% elif order.status == 'cancelled' %}
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>${{ order.total_amount }}</td>
+                                        <td>
+                                            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if user.orders.all.count > 5 %}
+                            <div class="text-center mt-3">
+                                <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary">View All Orders</a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="{% url 'create_order' %}" class="btn btn-primary">Place Your First Order</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

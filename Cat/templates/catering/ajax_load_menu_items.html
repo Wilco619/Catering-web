@@ -1,0 +1,9 @@
+<!-- catering/templates/catering/ajax_load_menu_items.html -->
+<!-- This is a template for the AJAX response that loads menu items based on category -->
+<!-- It will be used by the JavaScript to update menu item selections dynamically -->
+
+{% for menu_item in menu_items %}
+    <option value="{{ menu_item.id }}" data-price="{{ menu_item.price }}">{{ menu_item.name }} (${{ menu_item.price }})</option>
+{% empty %}
+    <option value="">No menu items available in this category</option>
+{% endfor %}

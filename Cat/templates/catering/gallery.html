@@ -1,0 +1,168 @@
+<!-- templates/catering/gallery.html -->
+{% extends 'base.html' %}
+
+{% block title %}Gallery - Your Catering Company{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-primary text-white py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1 class="display-4">Event Gallery</h1>
+                <p class="lead">Browse photos from our previous catering events</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Event Type Filters -->
+<section class="container mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="event-filters d-flex flex-wrap gap-2 justify-content-center">
+                <a href="{% url 'gallery' %}" class="btn {% if not selected_event_type %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All Events
+                </a>
+                {% for event_type in event_types %}
+                    {% if event_type %}
+                    <a href="{% url 'gallery' %}?event_type={{ event_type }}" class="btn {% if selected_event_type == event_type %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {{ event_type }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Images -->
+<section class="container mb-5">
+    {% if images %}
+    <div class="row g-4">
+        {% for image in images %}
+        <div class="col-md-4 col-sm-6">
+            <div class="card h-100 gallery-card">
+                <img src="{{ image.image.url }}" class="card-img-top" alt="{{ image.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ image.title }}</h5>
+                    {% if image.event_type %}
+                    <span class="badge bg-secondary mb-2">{{ image.event_type }}</span>
+                    {% endif %}
+                    {% if image.description %}
+                    <p class="card-text">{{ image.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    <small>{{ image.created_at|date:"F j, Y" }}</small>
+                    {% if image.featured %}
+                    <span class="badge bg-warning float-end">Featured</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if selected_event_type %}&event_type={{ selected_event_type }}{% endif %}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_event_type %}&event_type={{ selected_event_type }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if selected_event_type %}&event_type={{ selected_event_type }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_event_type %}&event_type={{ selected_event_type }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_event_type %}&event_type={{ selected_event_type }}{% endif %}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="text-center py-5">
+        <h3>No gallery images found</h3>
+        {% if selected_event_type %}
+        <p>No images found for "{{ selected_event_type }}" events. Please check back later or browse other event types.</p>
+        {% else %}
+        <p>Our gallery will be updated soon with beautiful images from our events.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<!-- Testimonials -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2>What Our Clients Say</h2>
+                <p class="lead">Don't just take our word for it - see what our clients think about our catering service</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-5">
+                        <a href="{% url 'add_testimonial' %}" class="btn btn-primary mb-4">Share Your Experience</a>
+                        
+                        <p class="text-center mb-0">Have you used our catering services? We'd love to hear about your experience!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <h2>Ready to create lasting memories at your next event?</h2>
+            <p class="lead">Our team is ready to help you plan the perfect catering experience.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a href="{% url 'create_order' %}" class="btn btn-primary btn-lg">Place an Order</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize lightbox or other gallery features if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // You could add a lightbox feature here if desired
+    });
+</script>
+{% endblock %}
